@@ -335,6 +335,7 @@ function enterACell(cell){
      const element = $(`[data-row=${cell.location[0]}][data-col=${cell.location[1]}]`);
      $(element).find('img').attr('src','images/arrow_man.jpg');
      $(element).find('img').removeClass('hide');
+     if(cell.visited==true) return;
      $(element).addClass('visited');
      if(cell.containsGold) {
         alert("gold found--reload(f5) to play again");
@@ -351,6 +352,7 @@ function enterACell(cell){
         $('.nextBtn').addClass('hide');
         return;
     }
+    
     cell.visited = true;
     // remove this cell from queue
     let pos = contains(queue,cell.location);
