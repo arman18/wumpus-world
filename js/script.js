@@ -317,9 +317,15 @@ function enterACell(cell){
     }
     if(cell.hasBreeze){
         addNewStatementFolPit(cell);
+        adj.forEach((item)=>{
+            updatePitInfo(board[item[0]][item[1]],0);
+        });
     }
     if(cell.hasStink){
         addNewStatementFolWompus(cell);
+        adj.forEach((item)=>{
+            updateWompusInfo(board[item[0]][item[1]],0);
+        });
     }
 }
 // ------ jquery ---------------------------
