@@ -320,6 +320,7 @@ function addBreezeCounter(cell){
         }
     });
 }
+let goldFound=false;
 function enterACell(cell){
     
     if(currentCell!=-1){
@@ -335,13 +336,21 @@ function enterACell(cell){
      const element = $(`[data-row=${cell.location[0]}][data-col=${cell.location[1]}]`);
      $(element).find('img').attr('src','images/arrow_man.jpg');
      $(element).find('img').removeClass('hide');
-     if(cell.visited==true) return;
-     $(element).addClass('visited');
-     if(cell.containsGold) {
+     if(cell.location[0]==0 && cell.location[1]==0 && goldFound==true) {
         alert("gold found--reload(f5) to play again");
         $('.nextBtn').addClass('hide');
+       return;
+   }
+     if(cell.visited==true) return;
+     cell.visited = true;
+     $(element).addClass('visited');
+     if(cell.containsGold) {
+        // alert("gold found--reload(f5) to play again");
+        // $('.nextBtn').addClass('hide');
+        goldFound=true;
         return;
     }
+    
     if(cell.containsPit) {
         alert("agent fall into pit--reload(f5) to play again");
         $('.nextBtn').addClass('hide');
@@ -353,7 +362,7 @@ function enterACell(cell){
         return;
     }
     
-    cell.visited = true;
+    
     // remove this cell from queue
     let pos = contains(queue,cell.location);
     if(pos!=-1) queue.splice(pos,1);
@@ -389,8 +398,39 @@ function enterACell(cell){
         });
     }
 }
+
 // ------ jquery ---------------------------
-let nextLocation = [0,0];
+let nextLocation = [0,0],visitedQue=[]; // should exlude pre and include nextlocation
+let color=[],pre=[],que=[];
+function initVar(){
+    color.length=0;
+    pre.length=0;
+    que.length=0;
+}
+function bfs(){
+    
+    while(que.length!=0){
+        let first = que.shift();
+        let adj = getAdjacent(board[first[0]][first[1]]);
+        adj.forEach((item)=>{
+             if(board[item[0]][item[1]].visited!=true) return;
+            let index = item[0]*10+item[1];
+            if(color[index]==undefined){
+                color[index]=1;
+                pre[index] = first;
+                que.push(item);
+            }
+        });
+        color[first[0]*10+first[1]]=-1;
+    }
+}
+function getSequence(lastLocaion){
+    while(pre[lastLocaion[0]*10+lastLocaion[1]][0]!=-1){
+        visitedQue.unshift(lastLocaion);
+        lastLocaion= pre[lastLocaion[0]*10+lastLocaion[1]];
+    }
+}
+let goldArr=[];
 $('.nextBtn').on('click',function(e){ 
     
     if(nextLocation.length==0) {
@@ -398,14 +438,53 @@ $('.nextBtn').on('click',function(e){
         $('.nextBtn').addClass('hide');
         return;
     }
+    if(goldFound==true){
+        if(goldArr.length==0){
+            initVar();
+            pre[nextLocation[0]*10+nextLocation[1]] = [-1,-1];
+            color[nextLocation[0]*10+nextLocation[1]] = 1;
+            que.push(nextLocation);
+            bfs();
+            
+            getSequence([0,0]);
+            goldArr  = visitedQue;
+            nextLocation = goldArr.shift();
+        }
+        else{
+            nextLocation = goldArr.shift();
+        }
+    }
     enterACell(board[nextLocation[0]][nextLocation[1]]);
+    if(goldFound==true) return;
     log('current cell: '+nextLocation);
     log('arrows '+arrows);
     // log('wumpus statements---');
     // log(FolWoppus);
     // log('pit statements---');
     // log(FolPit);
-    nextLocation = nextCell(nextLocation);
+    if(visitedQue.length==0){
+        let preLocation = nextLocation;
+        nextLocation = nextCell(preLocation);
+        const adj = getAdjacent(board[preLocation[0]][preLocation[1]]);
+        if(contains(adj,nextLocation)==-1){
+            initVar();
+            pre[preLocation[0]*10+preLocation[1]] = [-1,-1];
+            color[preLocation[0]*10+preLocation[1]] = 1;
+            que.push(preLocation);
+            bfs();
+            let adj2 = getAdjacent(board[nextLocation[0]][nextLocation[1]]);
+            let nextLocationAdj;
+            adj2.forEach((item)=>{
+                if(board[item[0]][item[1]].visited==true) nextLocationAdj=item;
+            });
+            getSequence(nextLocationAdj);
+            visitedQue.push(nextLocation);
+            nextLocation = visitedQue.shift();
+        }
+    }
+    else{
+        nextLocation = visitedQue.shift();
+    }
         
     log('next available cells and resolution');
     queue.forEach((item)=>{
