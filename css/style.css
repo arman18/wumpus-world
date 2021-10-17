@@ -3,7 +3,13 @@
     align-items: center;
     justify-content: center;
 }
-
+.contextMenu{
+    position: fixed;
+    top:2px;
+    z-index: 100;
+    left: 50%;
+    transform: translateX(-50%);
+}
 .grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -14,7 +20,8 @@
     position: relative;
     max-width: 650px;
     min-height: 450px;
-    margin-top: 20px;
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
 
 .item {
@@ -62,6 +69,12 @@
     border-radius: 5px;
     border: 1px solid transparent;
     cursor: pointer;
+
+    position: fixed;
+    bottom:2px;
+    z-index: 100;
+    left: 50%;
+    transform: translateX(-50%);
 }
 .visited{
     background-color: burlywood;
