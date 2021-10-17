@@ -98,37 +98,96 @@ function nextCell(currentCell){
      const gold = queue.filter((item)=>{
          return item.containsGold;
      });
-     if(gold.length>=1) return gold[0];
+     let tempArray,tempDistance;
+     tempDistance=Infinity;
+     if(gold.length>=1) {
+        gold.forEach((item)=>{
+            let dist = Math.sqrt(Math.pow(item[0]-currentCell[0],2)+Math.pow(item[1]-currentCell[1],2));
+            if(dist<tempDistance){
+                tempDistance =dist;
+                tempArray=item;
+            }
+        });
+        return tempArray;
+     }
 
+     //tempDistance=Infinity;
      const empty = queue.filter((each)=>{
          item = board[each[0]][each[1]];
         if(item.wompus==-1 && item.pit==-1) return true;
         else return false;
     });
-    if(empty.length>=1) return empty[0];
+    if(empty.length>=1) {
+        empty.forEach((item)=>{
+            let dist = Math.sqrt(Math.pow(item[0]-currentCell[0],2)+Math.pow(item[1]-currentCell[1],2));
+            if(dist<tempDistance){
+                tempDistance =dist;
+                tempArray=item;
+            }
+        });
+        return tempArray;
+    }
 
+    //tempDistance=Infinity;
     const nopit = queue.filter((each)=>{
         item = board[each[0]][each[1]];
         if(item.pit==-1) return true;
         else return false;
     });
-    if(nopit.length>=1) return nopit[0];
+    if(nopit.length>=1) {
+        nopit.forEach((item)=>{
+            let dist = Math.sqrt(Math.pow(item[0]-currentCell[0],2)+Math.pow(item[1]-currentCell[1],2));
+            if(dist<tempDistance){
+                tempDistance =dist;
+                tempArray=item;
+            }
+        });
+        return tempArray;
+    }
 
+    //tempDistance=Infinity;
     const wompusOnly = queue.filter((each)=>{
         item = board[each[0]][each[1]];
         if(item.wompus==1) return true;
         else return false;
     });
-    if(wompusOnly.length>=1) return wompusOnly[0];
+    if(wompusOnly.length>=1) {
+        wompusOnly.forEach((item)=>{
+            let dist = Math.sqrt(Math.pow(item[0]-currentCell[0],2)+Math.pow(item[1]-currentCell[1],2));
+            if(dist<tempDistance){
+                tempDistance =dist;
+                tempArray=item;
+            }
+        });
+        return tempArray;
+    }
     
+    //tempDistance=Infinity;
     const bothUnsure = queue.filter((each)=>{
         item = board[each[0]][each[1]];
         if(item.wompus==0 && item.pit==0) return true;
         else return false;
     });
-    if(bothUnsure.length>=1) return bothUnsure[0];
+    if(bothUnsure.length>=1) {
+        bothUnsure.forEach((item)=>{
+            let dist = Math.sqrt(Math.pow(item[0]-currentCell[0],2)+Math.pow(item[1]-currentCell[1],2));
+            if(dist<tempDistance){
+                tempDistance =dist;
+                tempArray=item;
+            }
+        });
+        return tempArray;
+    }
 
-    return queue[0];
+    queue.forEach((item)=>{
+        let dist = Math.sqrt(Math.pow(item[0]-currentCell[0],2)+Math.pow(item[1]-currentCell[1],2));
+        if(dist<tempDistance){
+            tempDistance =dist;
+            tempArray=item;
+        }
+    });
+    return tempArray;
+    //return queue[0];
     
 
 }
@@ -287,7 +346,7 @@ function enterACell(cell){
         $('.nextBtn').addClass('hide');
         return;
     }
-    if(cell.containsWompus && --arrows==-1) {
+    if(cell.containsWompus && arrows==-1) {
         alert("agent killed by wumpus--reload(f5) to play again");
         $('.nextBtn').addClass('hide');
         return;
@@ -344,19 +403,31 @@ $('.nextBtn').on('click',function(e){
     // log(FolWoppus);
     // log('pit statements---');
     // log(FolPit);
-    nextLocation = nextCell([0,0]);
-
+    nextLocation = nextCell(nextLocation);
+        
     log('next available cells and resolution');
     queue.forEach((item)=>{
-        log('cell '+ item + ' pitAssump '+board[item[0]][item[1]].pit+' wumpusAssump: '+board[item[0]][item[1]].wompus);
+        log('cell '+ item + ', pitAssump: '+board[item[0]][item[1]].pit+', wumpusAssump: '+board[item[0]][item[1]].wompus);
     });
-    log('choosed for next: '+nextLocation);
-
+    log('choosed for next cell: '+nextLocation);
+    const nextcell = board[nextLocation[0]][nextLocation[1]];
+    if((nextcell.wompus==0 || nextcell.wompus==1) && arrows>0){
+        log('shooting an arrow--->'+nextLocation);
+        arrows--;
+    }
+    else if((nextcell.wompus==0 || nextcell.wompus==1) && arrows==0){
+        if(nextcell.wompus==0) log('i have no arrow. may be going to die. pray for me ');
+        if(nextcell.wompus==1) log('i have no arrow. going to die. pray for me ');
+        arrows--;
+    }
+    if(nextcell.pit==1) log('jumping pit');
+    if(nextcell.pit==0) log('if pit exist. i am finished. pray for me');
     log('------- 0 ------');
 });
 $('.startBtn').on('click',function(e){ 
     $('.contextMenu').addClass('hide');
     $('.nextBtn').removeClass('hide');
+    $('.grid').removeClass('hoverable');
     $(this).addClass('hide');
 });
 $('.grid').on('click','.cell',function(e){
