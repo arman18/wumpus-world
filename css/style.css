@@ -1,0 +1,68 @@
+.crow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    margin-left: auto;
+    margin-right: auto;
+    grid-gap: 2px;
+    position: relative;
+    max-width: 650px;
+    min-height: 450px;
+    margin-top: 20px;
+}
+
+.item {
+    background-color: black;
+    color: white;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.cell img {
+    width: 64px;
+    height: 64px;
+}
+
+.cell {
+    width: 64px;
+    height: 50px;
+    border: 1px solid transparent;
+    background-color: rgb(192, 192, 192);
+}
+
+.item:hover {
+    border: 1px solid white;
+}
+
+.hoverable .cell:hover:not(.active) {
+    border: 1px solid black;
+}
+.hoverable .cell.active {
+    border: 1px solid rgb(0, 0, 0);
+    background-color: aquamarine;
+}
+
+.hide {
+    display: none;
+}
+.btn{
+    background-color: black;
+    color: white;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+.visited{
+    background-color: burlywood;
+}
