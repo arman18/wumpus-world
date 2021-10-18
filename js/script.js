@@ -199,9 +199,13 @@ function resolutionFol(element,type){
     for(let i=0;i<FOLs.length;i++){
         items = FOLs[i];
         pos = contains(items,element);
-        if(pos!=-1) items.splice(pos,1);
+        if(pos!=-1) {
+            log('this cell ('+element+') resolved a '+type+' statement from :'+items);
+            items.splice(pos,1);
+            log('to :'+items);
+        }
         if(items.length==1) {
-            log('this cell ('+element+') resolved a '+type+' statement');
+            
             if(type=='wompus') board[items[0][0]][items[0][1]].wompus=1;
             else board[items[0][0]][items[0][1]].pit=1;
             FOLs.splice(i,1);
@@ -345,8 +349,8 @@ function enterACell(cell){
      cell.visited = true;
      $(element).addClass('visited');
      if(cell.containsGold) {
-        // alert("gold found--reload(f5) to play again");
-        // $('.nextBtn').addClass('hide');
+        alert("gold found");
+        
         goldFound=true;
         return;
     }
